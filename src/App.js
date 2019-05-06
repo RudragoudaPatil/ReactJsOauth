@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React,{ Component } from 'react';
 
-function App() {
+import './App.css';
+import firebase from 'firebase';
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
+
+firebase.initializeApp({
+  apiKey:"AIzaSyAw9NcotXEjU64GyIalgKs3llIQdK7PlYs",
+  authDomain:"oauthdemo-9ab3b.firebaseapp.com"
+})
+
+class App extends Component{
+  constructor(props){
+    super(props)
+    this.state={
+      isSignedIn:false
+    }
+    
+  }
+  uiConfig = {
+    signInFlow: "popup",
+    signInOptions:[
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      
+    ],
+    callbacks:{
+      signInSuccess:()=>false
+    }
+  }
+  componentDidMount=()=>{
+   
+
+
+    firebase.auth().onAuthStateChanged(user=>{
+      this.setState({isSignedIn:!!user})
+    })
+
+  }
+  render(){
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {this.state.isSignedIn ?(
+      <div>Signed In!</div>
+      ):(   
+    <StyledFirebaseAuth uiConfig={this.uiConfig}
+    firebaseAuth={firebase.auth()}/>
+    
+      )}
     </div>
   );
+}
 }
 
 export default App;
